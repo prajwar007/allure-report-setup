@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  # your other env specific resources here
+
+patches:
+  #- path: patches/api-secret.yaml
+  # your other patches here

@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: allure-ingress-service-node-port
+  annotations:
+    #https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#custom-max-body-size
+    nginx.ingress.kubernetes.io/proxy-body-size: "500m"
+    #https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#rewrite
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # kubernetes.io/ingress.class: "nginx"
+spec:
+  ingressClassName: nginx
+  tls:
+    - secretName: tls-secret
+      hosts:
+        - allure-report.local.com
+  rules:
+    - host: allure-report.local.com
+      http:
+        paths:
+          - path: /allure-api/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: allure-api
+                port:
+                  number: 2020
+          - path: /allure-ui/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: allure-ui
+                port:
+                  number: 3030
+          - path: /?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: allure-ui
+                port:
+                  number: 3030
